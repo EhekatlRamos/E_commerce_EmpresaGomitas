@@ -1,1 +1,43 @@
 /* You can add global styles to this file, and also import other style files */
+body{
+    background-color: rgb(250, 68, 123);
+    text-align: center;
+}
+.container{
+    background-color: rgb(76, 169, 240);
+    width: 50%;
+}
+.todo{
+    background-color: rgb(238, 123, 224);
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+h1, h2, h3{
+    color: rgb(255, 234, 203);
+}
+h5{
+    color: rgb(255, 239, 65);
+}
+h4, h6{
+    color: rgb(4, 121, 211);
+}
+a {
+  text-decoration: none; /* Elimina el subrayado */
+}
+button{
+    background-color: rgb(255, 247, 170);
+    
+}
+img{
+    width: 30%;
+}
+ul{
+    list-style-type: none;
+}
+.carrito{
+    width: 10%;
+}
+div{
+    text-align: center;
+}

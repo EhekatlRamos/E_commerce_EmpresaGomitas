@@ -9,11 +9,3 @@ export const obtenerProducto = (req,res)=>{
         res.json(results);
     });
 };
-db.connect((err)=>{
-    if(err){
-        console.error('Error al conectar',err);
-    }else{
-        console.log('Conectado correctamente');
-    }
-});
-export default db;

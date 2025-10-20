@@ -1,34 +1,42 @@
-<h2 class="text-xl font-bold mb-4">Carrito</h2>
-
+<br>
+<h1 class="text-xl font-bold mb-4">Carrito de compras</h1>
+<br>
     @if (carrito().length === 0) {
-      <p>Tu carrito está vacío.</p>
+      <h3>Tu carrito está vacío.</h3>
     } @else {
       <ul class="space-y-2">
         @for (producto of carrito(); track producto.id) {
-          <li class="p-2 border rounded flex justify-between items-center">
-            <span>{{ producto.nombre }} - {{ producto.precio | currency }}</span>
+          <li class="container p-3 border rounded flex justify-between items-center">
+            <span><h5>{{ producto.nombre }} - {{ producto.precio | currency }}</h5></span>
+            
             <button
               class="bg-red-500 text-white px-2 py-1 rounded"
               (click)="quitar(producto.id)">
-              Quitar
+              <h6>Quitar</h6>
             </button>
           </li>
+          <br>
         }
       </ul>
 
       <div class="mt-4 font-semibold">
-        Total: {{ total() | currency }}
+        <h3>Total: {{ total() | currency }}</h3>
       </div>
 
       <button
         class="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
         (click)="vaciar()">
-        Vaciar carrito
+        <h4>Vaciar carrito</h4>
+        
       </button>
+      <br>
       <button
         class="mt-2 bg-purple-500 text-white px-4 py-2 rounded"
         (click)="exportarXML()">
-        Exportar Recibo XML
+        <h4>Exportar Recibo XML</h4>
     </button>
-
+    <br><br><br>
+    <div class="d-flex justify-content-center mt-3">
+      <div id="paypal-button-container"></div>
+    </div>
     }

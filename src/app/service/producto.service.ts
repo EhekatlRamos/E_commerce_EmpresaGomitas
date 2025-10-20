@@ -1,10 +1,20 @@
 import {Injectable} from '@angular/core';
 import {Producto} from '../modelo/producto';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import { CatalogoComponent } from '../producto/producto';
+
 @Injectable({
     providedIn:'root'
 })
+
 export class ProductService{
-    async getProducts(): Promise<Producto[]>{
+    private apiUrl = 'http://localhost:4000/api/catalogo';
+    constructor (private http: HttpClient){}
+    getProducts(): Observable<any>{
+        return this.http.get<any>(`${this.apiUrl}/productos`);
+    }
+    /*async getProducts(): Promise<Producto[]>{
         try {
             const response = await fetch('assets/productos.xml');
             const xmlText = await response.text();
@@ -30,5 +40,5 @@ export class ProductService{
         console.error('Error cargando XML:', err);
         return [];
         }
-    }
+    }*/
 }
