@@ -3,29 +3,65 @@ import { Producto } from '../modelo/producto';
 
 @Injectable({ providedIn: 'root' })
 export class CarritoService {
-  // Signal con la lista de productos en el carrito
   private productosSignal = signal<Producto[]>([]);
-
-  // Exponer el carrito como readonly
   productos = this.productosSignal.asReadonly();
+
+  private apiUrl = 'http://localhost:4000/api/catalogo';
+
+  constructor() {}
+
+  // usar fetch y devolver una Promise con el resultado JSON
+  async crearVenta(): Promise<any> {
+    const totalVenta = this.total();
+    console.log('Total calculado:', totalVenta);
+
+    // Validación básica en el frontend
+    if (totalVenta === undefined || totalVenta === null) {
+      alert('Error: no se pudo calcular el total.');
+      throw new Error('Total indefinido');
+    }
+    if (totalVenta <= 0) {
+      alert('El carrito está vacío o el total es 0. Agrega productos antes de comprar.');
+      throw new Error('Total inválido (<= 0)');
+    }
+
+    const ventaData = { total: totalVenta };
+
+    try {
+      const response = await fetch(`${this.apiUrl}/ventas`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(ventaData),
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`HTTP ${response.status}: ${text}`);
+      }
+
+      const data = await response.json();
+      this.vaciar();
+      return data;
+    } catch (err) {
+      console.error('Error creando venta:', err);
+      throw err;
+    }
+  }
 
   agregar(producto: Producto) {
     this.productosSignal.update(lista => [...lista, producto]);
   }
 
   quitar(id: number) {
-    this.productosSignal.update(lista =>
-      lista.filter(p => p.id !== id)
-    );
+    this.productosSignal.update(lista => lista.filter(p => p.id !== id));
   }
 
-  vaciar() {
-    this.productosSignal.set([]);
-  }
+  vaciar() { this.productosSignal.set([]); }
 
   total() {
     return this.productosSignal().reduce((acc, p) => acc + p.precio, 0);
   }
+
   exportarXML() {
     const productos = this.productosSignal();
 
@@ -59,5 +95,4 @@ export class CarritoService {
     // Liberar memoria
     URL.revokeObjectURL(url);
   }
-
 }

@@ -32,7 +32,8 @@ export class CarritoComponent implements AfterViewInit{
         onApprove: (data: any, actions: any) => {
           return actions.order.capture().then((details: any) => {
             console.log('Pago completado', details);
-            
+            this.crearVentas();
+            this.vaciar(); 
           });
         }
     }).render('#paypal-button-container');
@@ -48,8 +49,10 @@ export class CarritoComponent implements AfterViewInit{
   
   exportarXML() {
   this.carritoService.exportarXML();
+  }
 
-  
-}
+  crearVentas() {
+    this.carritoService.crearVenta();
+  }
 }
 
