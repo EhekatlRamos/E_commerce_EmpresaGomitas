@@ -2,6 +2,14 @@
 body{
     background-color: rgb(250, 68, 123);
     text-align: center;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+
+    background-image: url("assets/image.png");
+    background-attachment: fixed;
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 .container{
     background-color: rgb(76, 169, 240);
@@ -40,4 +48,16 @@ ul{
 }
 div{
     text-align: center;
+}
+.navbar{
+    background-color: #bd2452;
+}
+.nav-link, .navbar-brand{
+    color: white;
+    font-size: 25px;
+}
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
