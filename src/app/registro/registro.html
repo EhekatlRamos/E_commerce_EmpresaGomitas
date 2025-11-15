@@ -29,16 +29,8 @@
         <label for="correo"><h4>Correo electronico</h4></label><br>
         <input type="text" formControlName="email" placeholder="Escribe tu correo electronico"><br><br>
         
-        <div>
-          <label for="Admin"><h4>Administrador</h4></label>
-          <input type="radio" id="Admin" formControlName="rol" value="Admin" style="width: 20px;">
+        <input type="hidden" id="Admin" formControlName="rol" value="Cliente">
           
-        </div>
-        <div>
-          <label for="Cliente"><h4>Cliente</h4></label>
-          <input type="radio" id="Cliente" formControlName="rol" value="Cliente" style="width: 20px;" checked>
-          
-        </div>
         <input type="submit" id="continuar"><br><br>
     </form>
 </div>

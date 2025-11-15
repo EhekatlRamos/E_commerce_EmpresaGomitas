@@ -36,18 +36,27 @@ export const crearVentas = (req, res) => {
     });
 };
 
+// controllers/catalogoController.js (simplificado)
 export const iniciarSesion = (req, res) => {
-    const {username, password} = req.body;
-    const sql = `SELECT * FROM usuario WHERE Nombre = ? AND Contrasena = ? `;
-    db.query(sql, [username, password], (err, result) => {
-        if (err) {
-        console.error(err); // Aquí verás el error real
-        return res.status(500).json({ error: 'Error al iniciar sesion' });
-    }
-    res.json(result);
-    
+  const { username, password } = req.body;
+  const sql = `SELECT * FROM usuario WHERE Nombre = ? LIMIT 1`;
+  db.query(sql, [username], async (err, results) => {
+    if (err) return res.status(500).json({ success: false, message: 'Error en servidor' });
+    if (!results || results.length === 0) return res.status(401).json({ success: false, message: 'Usuario no encontrado' });
+
+    const user = results[0];
+    // si usas bcrypt:
+    const ok = /* await bcrypt.compare(password, user.Contrasena) */ (password === user.Contrasena);
+    if (!ok) return res.status(401).json({ success: false, message: 'Contraseña incorrecta' });
+
+    // devuelve datos mínimos (sin contraseña)
+    return res.json({
+      success: true,
+      user: { id: user.idUsuario, nombre: user.Nombre, rol: user.Rol }
     });
+  });
 };
+
 
 export const registrar = (req, res) => {
     const {username, password, email, rol} = req.body;

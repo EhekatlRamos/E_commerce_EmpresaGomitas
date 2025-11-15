@@ -11,8 +11,12 @@
         <li class="nav-item">
           <a class="nav-link " href="#">Home</a>
         </li>
-        <li class="nav-item"><a [routerLink]="['/inicio-sesion']" class="nav-link">Inicio de sesion</a></li>
-        <li class="nav-item"><a [routerLink]="['/registro']" class="nav-link" >Registrarse</a></li>
+      </ul>
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a [routerLink]="['/carrito']" class="nav-link"><img src="assets/carrito.png" class="icono"></a></li>
+        <li class="nav-item"><a [routerLink]="['']" class="nav-link"><img src="assets/inventario.png" class="icono"></a></li>
+        <li class="nav-item"><a [routerLink]="['/inicio-sesion']" class="nav-link" ><img src="assets/usuario.png" class="icono"></a></li>
+        <li class="nav-item"><a [routerLink]="['']" class="nav-link" ><img src="assets/salir.png" class="icono"></a></li>
       </ul>
     </div>
   </div>
