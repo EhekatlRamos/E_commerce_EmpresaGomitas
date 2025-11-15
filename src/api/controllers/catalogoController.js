@@ -1,4 +1,5 @@
 import db from '../config/db.js'
+import nodemailer from 'nodemailer'
 
 export const obtenerProducto = (req,res)=>{
     const sql='SELECT * FROM gomita';
@@ -84,7 +85,6 @@ export const registrar = (req, res) => {
     }); 
 }
 export const recuperarContrasena = async (req,res)=> {
-    const nodemailer = require("nodemailer");
     const {username, email} = req.body;
     if (!username || !email) {
         return res.status(400).json({ error: 'Faltan datos obligatorios' });
@@ -92,9 +92,9 @@ export const recuperarContrasena = async (req,res)=> {
     const sql='SELECT Contrasena FROM usuario WHERE Nombre = ? AND CorreoElectronico = ?';
     try{
         const results = await new Promise((resolve, reject) => {
-            db.query(sql,(err,results)=>{
+            db.query(sql,[username, email],(err,results)=>{
                 if(err) return reject(err);
-                resolve(rows);
+                resolve(results);
             });
         });
     
@@ -115,8 +115,8 @@ export const recuperarContrasena = async (req,res)=> {
             from: 'Salameck <guapopreciososalameckel@gmail.com>',
             to: email,
             subject: "Recuperar contraseña",
-            text: "Tu contraseña es: ${password}",
-            html: "<b>Tu contraseña es: ***</b>",
+            text: `Tu contraseña es: ${password}`,
+            html: `<b>Tu contraseña es: ${password}</b>`,
         });
 
         console.log("Message sent:", info.messageId);

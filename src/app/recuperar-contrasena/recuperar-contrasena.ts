@@ -30,5 +30,13 @@ export class RecuperarContrasenaComponent {
     if(this.loginForm.invalid) return;
     this.recuperarContrasenaService
     .submit(this.loginForm.value.username, this.loginForm.value.email)
+    .then(success => {
+        if(success){
+            alert('Favor de checar su correo para la recuperacion de contraseña');
+        }
+      })
+      .catch(err => {
+        console.error('Error en registro', err);
+      });
   }
 }

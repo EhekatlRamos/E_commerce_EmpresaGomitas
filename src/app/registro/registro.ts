@@ -40,6 +40,7 @@ export class RegistroComponent {
       })
       .catch(err => {
         console.error('Error en registro', err);
+        alert('Error al registrar');
       });
   }
 }
