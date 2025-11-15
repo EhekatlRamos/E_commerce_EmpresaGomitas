@@ -54,6 +54,7 @@ export const registrar = (req, res) => {
     if (!username || !password) {
         return res.status(400).json({ error: 'Faltan datos obligatorios' });
     }
+    
     const sql1 = ` SELECT * from usuario WHERE Nombre = ?`;
     db.query(sql1, [username], (err, result1) => {
         if (err) {
@@ -80,6 +81,60 @@ export const registrar = (req, res) => {
                 idUsuario: result2.insertId
             });
         });
-    });
+    }); 
+}
+export const recuperarContrasena = async (req,res)=> {
+    const nodemailer = require("nodemailer");
+    const {username, email} = req.body;
+    if (!username || !email) {
+        return res.status(400).json({ error: 'Faltan datos obligatorios' });
+    }
+    const sql='SELECT Contrasena FROM usuario WHERE Nombre = ? AND CorreoElectronico = ?';
+    try{
+        const results = await new Promise((resolve, reject) => {
+            db.query(sql,(err,results)=>{
+                if(err) return reject(err);
+                resolve(rows);
+            });
+        });
     
+    if(!results || results.length === 0){
+        return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+    const password = results[0].Contrasena;
+    // Create a test account or replace with real credentials.
+    const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: "guapopreciososalameckel@gmail.com",
+            pass: "ohqq dnqr njxj gsxr", 
+        },
+    });
+    try {
+        const info = await transporter.sendMail({
+            from: 'Salameck <guapopreciososalameckel@gmail.com>',
+            to: email,
+            subject: "Recuperar contraseña",
+            text: "Tu contraseña es: ${password}",
+            html: "<b>Tu contraseña es: ***</b>",
+        });
+
+        console.log("Message sent:", info.messageId);
+        res.json({ ok: true, messageId: info.messageId });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ ok: false, error: error.message });
+    }
+    transporter.sendMail(info, (error, detalles) => {
+        if (error) {
+            console.log("Error al enviar el correo:", error);
+        } else {
+            console.log("Correo enviado para recuperación");
+            console.log("Detalles:", detalles);
+        }
+    });
+    }catch(error){
+        console.error("Error en recuperarContrasena:", error);
+        return res.status(500).json({ ok: false, error: error.message });
+    }
 }
