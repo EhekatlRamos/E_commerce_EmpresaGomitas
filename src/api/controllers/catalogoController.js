@@ -1,5 +1,11 @@
 import db from '../config/db.js'
 import nodemailer from 'nodemailer'
+import multer from 'multer'
+import path from 'path'
+import {fileURLToPath} from 'url'
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export const obtenerProducto = (req,res)=>{
     const sql='SELECT * FROM gomita';
@@ -36,7 +42,6 @@ export const crearVentas = (req, res) => {
     res.json({ message: 'Venta creada correctamente', idVenta: result.insertId });
     });
 };
-
 export const iniciarSesion = (req, res) => {
     const {username, password} = req.body;
     const sql = `SELECT * FROM usuario WHERE Nombre = ? AND Contrasena = ? `;
@@ -49,7 +54,6 @@ export const iniciarSesion = (req, res) => {
     
     });
 };
-
 export const registrar = (req, res) => {
     const {username, password, email, rol} = req.body;
     if (!username || !password) {
@@ -137,4 +141,40 @@ export const recuperarContrasena = async (req,res)=> {
         console.error("Error en recuperarContrasena:", error);
         return res.status(500).json({ ok: false, error: error.message });
     }
+}
+const storage = multer.diskStorage({
+    destination:function(req, file, cb){
+        const rutaDestino = path.join(process.cwd(), 'public/uploads');
+        cb(null, rutaDestino);
+    },
+    filename: function (req, file, cb) {
+        const nombreLimpio = file.originalname.replace(/\s+/g, '-');
+        cb(null, Date.now() + '-' + nombreLimpio);
+    }
+});
+export const upload = multer({ storage: storage });
+
+export const actualizarImagenGomita = (req, res) => {
+    const id = req.params.id;
+
+    if(!req.file){
+        return res.status(400).send({message: 'No se ha subido ninguna imagen'});
+    }
+
+    const nombreImagen = req.file.filename;
+
+    const query = 'UPDATE gomita SET imagen = ? WHERE id = ?';
+
+
+    db.query(query, [nombreImagen, id], (err, result) => {
+        if(err){
+            console.error('Error al actualizar la base de datos', err);
+            return res.status(500).send({message: 'Error de base de datos'})
+        }
+        res.send({
+            message: 'Imagen actualizada correctamente',
+            imagen: nombreImagen, 
+            rutaCompleta: `http://localhost:3000/uploads/${nombreImagen}`
+        });
+    });
 }

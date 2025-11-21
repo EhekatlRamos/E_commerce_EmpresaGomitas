@@ -14,6 +14,12 @@ export class ProductService{
     getProducts(): Observable<any>{
         return this.http.get<any>(`${this.apiUrl}/productos`);
     }
+    actualizarImagen(id: number, archivo: File){
+        const formData = new FormData();
+        formData.append('imagen', archivo);
+
+        return this.http.post(`${this.apiUrl}/gomitas/${id}/imagen`, formData);
+    }
     /*async getProducts(): Promise<Producto[]>{
         try {
             const response = await fetch('assets/productos.xml');

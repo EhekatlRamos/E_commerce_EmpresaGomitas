@@ -1,0 +1,56 @@
+.navbar-nav .nav-link img.icono {
+  width: 45px;
+  height: 45px;
+  object-fit: contain;
+  text-align: right;
+}
+
+.navbar-nav .nav-link {
+  padding: 0 10px !important;
+}
+
+.navbar-nav .nav-item {
+  margin-right: 5px;
+}
+.container{
+    background-color: rgb(76, 169, 240);
+    width: 80%;
+    border-radius: 20px;
+}
+img{
+    width: 70%;
+}
+input{
+    font-size: 20px;
+    color: #0479d3;
+    background-color: #ffeacb;
+    border-radius: 20px;
+    height: 50px;
+    text-align: center;
+    width: 80%;
+}
+.descripcion{
+    font-size: 20px;
+    color: #0479d3;
+    background-color: #ffeacb;
+    border-radius: 20px;
+    text-align: center;
+    width: 80%;
+}
+#continuar{
+    background-color: #0479d3;
+    color: #ffeacb;
+    border-radius: 40px;
+    font-size: 20px;
+    height: 80px;
+    width: 200px;
+}
+input::placeholder{
+    font-size: 15px;
+    color: #4ca9f0;
+    text-align: center;
+}
+.titulo{
+    font-size: 400%;
+    font-style: italic;
+}
