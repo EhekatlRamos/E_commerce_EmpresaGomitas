@@ -1,10 +1,20 @@
 import { Injectable, signal } from '@angular/core';
+
 @Injectable({ providedIn: 'root' })
-export class iniciarSesionService{
+export class iniciarSesionService {
     private apiUrl = 'http://localhost:4000/api/catalogo';
+    currentUser = signal<any>(null);
+
+    constructor() {
+        if (typeof localStorage !== 'undefined') {
+            const storageUser = localStorage.getItem('usuario');
+            if (storageUser) {
+                this.currentUser.set(JSON.parse(storageUser));
+            }
+        }
+    }
     
     async submit(username: string, password: string): Promise<boolean>{
-    
         try{
             const response = await fetch(`${this.apiUrl}/iniciar-sesion`, {
                 method: 'POST',
@@ -12,13 +22,30 @@ export class iniciarSesionService{
                 body: JSON.stringify({username, password}),
             });
             if(!response.ok) return false;
+            
             const data = await response.json();
-            // Devuelve true si el login fue exitoso
-            return data.length > 0; // depende de cómo tu backend responda
-        }catch (error){
+            
+            if(data.length > 0) {
+                const usuarioEncontrado = data[0]; 
+                this.currentUser.set(usuarioEncontrado);
+                localStorage.setItem('usuario', JSON.stringify(usuarioEncontrado));
+                
+                return true; 
+            }
+            return false;
+        } catch (error){
             console.error(error);
-            alert('Usuario o contraseña incorrectos');
             return false;
         }
+    }
+
+    get esAdmin(): boolean {
+        const user = this.currentUser();
+        return user && (user.Rol === 'Admin' || user.Rol === 'admin');
+    }
+
+    cerrarSesion() {
+        this.currentUser.set(null);
+        localStorage.removeItem('usuario');
     }
 }
