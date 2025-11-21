@@ -12,14 +12,7 @@
           <a class="nav-link " href="#">Home</a>
         </li>
         <li class="nav-item"><a [routerLink]="['/inicio-sesion']" class="nav-link">Inicio de sesion</a></li>
-        <li class="nav-item"><a [routerLink]="['/registro']" class="nav-link" href="#">Registrarse</a></li>     
-        @if (authService.esAdmin) {
-            <li class="nav-item">
-                <button class="btn btn-warning" style="margin-left: 10px; font-weight: bold; color: black;">
-                    Inventario
-                </button>
-            </li>
-        }
+        <li class="nav-item"><a [routerLink]="['/registro']" class="nav-link" href="#">Registrarse</a></li>
       </ul>
     </div>
   </div>

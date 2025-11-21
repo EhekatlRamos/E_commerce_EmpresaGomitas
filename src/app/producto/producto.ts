@@ -5,6 +5,7 @@ import { CarritoService } from '../service/carrito.service';
 import { CurrencyPipe} from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import { iniciarSesionService } from '../service/iniciar-sesion.service';
 
 @Component({
   selector: 'app-catalogo',
@@ -17,11 +18,10 @@ import { HttpClientModule } from '@angular/common/http';
 })
 export class CatalogoComponent implements OnInit {
   private carritoService = inject(CarritoService);
+  public authService = inject(iniciarSesionService); 
 
   productos: Producto[] = [];
-
   constructor(private productoService: ProductService) {}
-
   agregar(producto: Producto) {
     this.carritoService.agregar(producto);
   }
