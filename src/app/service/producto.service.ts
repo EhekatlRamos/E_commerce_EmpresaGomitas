@@ -1,50 +1,63 @@
-import {Injectable} from '@angular/core';
-import {Producto} from '../modelo/producto';
-import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
-import { CatalogoComponent } from '../producto/producto';
+import { Injectable } from '@angular/core';
 
 @Injectable({
-    providedIn:'root'
+    providedIn: 'root'
 })
-
-export class ProductService{
+export class ProductService {
+    // Asegúrate de que el puerto sea 4000
     private apiUrl = 'http://localhost:4000/api/catalogo';
-    constructor (private http: HttpClient){}
-    getProducts(): Observable<any>{
-        return this.http.get<any>(`${this.apiUrl}/productos`);
+
+    constructor() {}
+
+    // GET
+    async getProducts(): Promise<any> {
+        const response = await fetch(`${this.apiUrl}/productos`);
+        if (!response.ok) throw new Error('Error al obtener productos');
+        return await response.json();
     }
-    actualizarImagen(id: number, archivo: File){
+
+    // PUT (Editar) - CORREGIDO PARA EVITAR ERRORES
+    async actualizarProducto(id: number, data: any, archivo: File | null): Promise<any> {
         const formData = new FormData();
-        formData.append('imagen', archivo);
-
-        return this.http.post(`${this.apiUrl}/gomitas/${id}/imagen`, formData);
-    }
-    /*async getProducts(): Promise<Producto[]>{
-        try {
-            const response = await fetch('assets/productos.xml');
-            const xmlText = await response.text();
-            //Parsear XML con DOM parser
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(xmlText, 'application/xml');
-            const productos: Producto[] = [];
-            const nodos = xmlDoc.getElementsByTagName('producto');
-
-            for(let i = 0; i < nodos.length; i++){
-                const nodo = nodos[i];
-                productos.push({
-                    id: Number(nodo.getElementsByTagName('id')[0]?.textContent||  '0'), 
-                    nombre: nodo.getElementsByTagName('nombre')[0]?.textContent || 'sin nombre',
-                    precio: Number(nodo.getElementsByTagName('precio')[0]?.textContent||  '0'),
-                    descripcion: nodo.getElementsByTagName('descripcion')[0]?.textContent || 'Sin descripcion',
-                    imagen: nodo.getElementsByTagName('imagen')[0]?.textContent || ''
-                });
-            }
-            console.log('Productos cargados:', productos);
-            return productos;
-        } catch (err) {
-        console.error('Error cargando XML:', err);
-        return [];
+        formData.append('nombre', data.nombre);
+        // Protegemos con || 0 para evitar errores si el dato es nulo
+        formData.append('precio', (data.precio || 0).toString());
+        formData.append('descripcion', data.descripcion || '');
+        formData.append('stock', (data.stock || 0).toString()); 
+        
+        if (archivo) {
+            formData.append('imagen', archivo);
         }
-    }*/
+
+        const response = await fetch(`${this.apiUrl}/productos/${id}`, {
+            method: 'PUT',
+            body: formData
+        });
+
+        if (!response.ok) throw new Error('Error al actualizar producto');
+        return await response.json();
+    }
+    
+    // POST (Crear) - CORREGIDO
+    async crearProducto(producto: FormData): Promise<any> {
+        // No necesitamos procesar el FormData aquí porque ya viene listo del componente
+        // pero asegurate de que el componente lo envíe bien.
+        const response = await fetch(`${this.apiUrl}/productos`, {
+            method: 'POST',
+            body: producto
+        });
+        
+        if (!response.ok) throw new Error('Error al crear producto');
+        return await response.json();
+    }
+
+    // DELETE (Baja lógica)
+    async eliminarProducto(id: number): Promise<any> {
+        const response = await fetch(`${this.apiUrl}/productos/baja/${id}`, {
+            method: 'PUT'
+        });
+
+        if (!response.ok) throw new Error('Error al eliminar el producto');
+        return await response.json();
+    }
 }
