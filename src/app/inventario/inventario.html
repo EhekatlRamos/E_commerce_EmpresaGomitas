@@ -21,82 +21,54 @@
       </div>
     </div>
   </nav>
-
-  <div class="container mt-4">
-    <div class="position-relative mb-5">
+      <br><br>
       <h1 class="text-2xl font-bold text-center">Inventario de gomitas (Modo Edición)</h1>
-    
-      <button class="btn btn-primary rounded-circle position-absolute top-0 end-0 shadow" 
-              style="width: 50px; height: 50px; font-size: 24px; padding: 0; line-height: 0;"
+      <br>
+      <button class="btn btn-primary top-0 end-0 shadow continuar" 
               (click)="agregarFila()"
               title="Agregar nuevo producto">
-        +
+        Agregar producto
       </button>
-    </div>
-    <br>
+      <br><br>
 
-    <div class="row"> 
-      
       @for (producto of productos; track $index) { 
-        <div class="col-12 mb-4"> 
-          <div class="p-3 border rounded shadow bg-white position-relative">
-            
+        <div class="p-2 border rounded shadow container">
+          <div class="row position-relative  p-3 rounded shadow-sm">
             <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 rounded-circle"
                     style="width: 30px; height: 30px; padding: 0; line-height: 0; z-index: 10;"
                     (click)="eliminarFila($index, producto.id)" 
                     title="Eliminar producto">
                 ✕
             </button>
+            </div>
+          <div class="row">
+            <div class="col-sm-5">
+              <img [src]="producto.imagenUrl || (producto.imagen && producto.imagen.toString().match('^[0-9]+-') ? 'http://localhost:4000/uploads/' + producto.imagen : 'assets/' + producto.imagen)" 
+                  alt="{{ producto.nombre }}" class="img-fluid rounded shadow-sm" onerror="this.src='assets/image.png'">
+            </div>
 
-            <div class="row">
-              
-              <div class="col-sm-5 d-flex flex-column align-items-center justify-content-center">
-                <img [src]="producto.imagenUrl || (producto.imagen && producto.imagen.toString().match('^[0-9]+-') ? 'http://localhost:4000/uploads/' + producto.imagen : 'assets/' + producto.imagen)" 
-                  alt="{{ producto.nombre }}" 
-                  class="img-fluid rounded shadow-sm"
-                  style="max-height: 200px; object-fit: contain; width: 100%;"
-                  onerror="this.src='assets/image.png'">
-              </div>
-
-              <div class="col-sm-7">
-                
-                <div class="mb-3">
-                  <label class="form-label fw-bold">Nombre de la gomita</label>
+            <div class="col-sm-7">
+              <label class="form-label"><h4>Nombre de la gomita</h4></label>
                   <input type="text" class="form-control" [(ngModel)]="producto.nombre" name="nombre-{{producto.id}}">
-                </div>
-
-                <div class="mb-3">
-                  <label class="form-label fw-bold">Descripción</label>
-                  <textarea class="form-control" rows="3" [(ngModel)]="producto.descripcion" name="desc-{{producto.id}}"></textarea>
-                </div>
-
-                <div class="mb-3">
-                  <label class="form-label fw-bold">Precio</label>
+                  <label class="form-label"><h4>Descripción</h4></label>
+                  <textarea class="form-control" rows="4" [(ngModel)]="producto.descripcion" name="desc-{{producto.id}}"></textarea>
+                  <label class="form-label"><h4>Precio por paquete</h4></label>
                   <input type="number" class="form-control" [(ngModel)]="producto.precio" name="precio-{{producto.id}}">
-                </div>
-
-                <div class="mb-3">
-                  <label class="form-label fw-bold">Stock Disponible</label>
+                  <label class="form-label"><h4>Stock disponible</h4></label>
                   <input type="number" class="form-control" [(ngModel)]="producto.stock" name="stock-{{producto.id}}">
-                </div>
-
-                <div class="mb-3">
-                  <label class="form-label fw-bold text-primary">Cambiar Imagen</label>
+                  <label class="form-label"><h4>Cambiar imagen</h4></label>
                   <input type="file" class="form-control" (change)="onFileSelected($event, producto.id)" accept="image/*">
-                </div>
-
-              </div>  
-            </div> 
-          </div> 
+            
+            </div>
+            
+          </div>
+      
+             
         </div>
+        <br><br>
       }
 
-    </div>
-
-    <div class="d-grid gap-2 col-6 mx-auto my-5">
-      <button class="btn btn-success btn-lg" (click)="guardarTodo()">
-        💾 Guardar Todos los Cambios
+      <button (click)="guardarTodo()" class="continuar">
+        Guardar los Cambios
       </button>
-    </div>
-
-  </div>
+      <br><br>

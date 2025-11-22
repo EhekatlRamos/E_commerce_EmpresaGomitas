@@ -37,7 +37,7 @@ input{
     text-align: center;
     width: 80%;
 }
-#continuar{
+.continuar{
     background-color: #0479d3;
     color: #ffeacb;
     border-radius: 40px;
@@ -53,4 +53,12 @@ input::placeholder{
 .titulo{
     font-size: 400%;
     font-style: italic;
+}
+textarea{
+    font-size: 20px;
+    color: #0479d3;
+    background-color: #ffeacb;
+    border-radius: 20px;
+    text-align: center;
+    width: 80%;
 }
