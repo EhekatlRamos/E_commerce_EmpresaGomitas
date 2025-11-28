@@ -19,5 +19,5 @@ export const routes: Routes = [
   { path: 'inventario', component: InventarioComponent},
   { path: 'usuario', component: UsuarioComponent},
   { path: 'aviso-privacidad', component: AvisoPrivacidad},
-  { path: 'terminos-condiciones', component: TerminosCondiciones}
+  { path: 'terminos-condiciones', component: TerminosCondiciones},
 ];

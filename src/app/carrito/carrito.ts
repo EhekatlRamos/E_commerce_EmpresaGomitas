@@ -1,17 +1,20 @@
 import { AfterViewInit, Component, computed, inject } from '@angular/core';
 import { CarritoService } from '../service/carrito.service';
 import { CurrencyPipe } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { iniciarSesionService } from '../service/iniciar-sesion.service';
 
 declare var paypal: any;
 
 @Component({
   selector: 'app-carrito',
   standalone: true,
-  imports: [CurrencyPipe], // Si usas ngModel, recuerda importar FormsModule aquí
+  imports: [CurrencyPipe, RouterModule], // Si usas ngModel, recuerda importar FormsModule aquí
   templateUrl: './carrito.html'
 })
 export class CarritoComponent implements AfterViewInit {
-  
+  public authService = inject(iniciarSesionService); 
+    
   private carritoService = inject(CarritoService);
   carrito = this.carritoService.productos;
   total = computed(() => this.carritoService.total());

@@ -24,7 +24,7 @@ export class RegistroComponent {
         username: ['', Validators.required],
         password: ['', Validators.required],
         email: ['', Validators.required],
-        rol: ['', Validators.required]
+        rol: ['Cliente', Validators.required]
     });
   }
   submit(){
