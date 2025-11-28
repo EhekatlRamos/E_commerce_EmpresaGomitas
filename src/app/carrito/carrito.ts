@@ -3,18 +3,31 @@ import { CarritoService } from '../service/carrito.service';
 import { CurrencyPipe } from '@angular/common';
 
 declare var paypal: any;
+
 @Component({
   selector: 'app-carrito',
   standalone: true,
-  imports: [CurrencyPipe],
+  imports: [CurrencyPipe], // Si usas ngModel, recuerda importar FormsModule aquí
   templateUrl: './carrito.html'
 })
-export class CarritoComponent implements AfterViewInit{
-  
+export class CarritoComponent implements AfterViewInit {
   
   private carritoService = inject(CarritoService);
   carrito = this.carritoService.productos;
   total = computed(() => this.carritoService.total());
+
+  aumentar(id: number) {
+    this.carritoService.aumentar(id);
+  }
+
+  disminuir(id: number) {
+    this.carritoService.disminuir(id);
+  }
+
+  cambiarCantidad(event: any, id: number) {
+    const valor = parseInt(event.target.value, 10);
+    this.carritoService.actualizarCantidad(id, valor);
+  }
 
   ngAfterViewInit(): void {
     const totalNumber = this.total();

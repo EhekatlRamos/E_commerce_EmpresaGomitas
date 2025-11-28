@@ -111,24 +111,32 @@ export const darBajaProducto = (req, res) => {
         res.json({ message: 'Producto eliminado correctamente' });
     });
 };
-export const crearVentas = (req, res) => {
-  const { total } = req.body;
-  if (!total) return res.status(400).json({ error: 'Falta el total' });
 
+export const crearVentas = (req, res) => {
+  const { total, productos, clienteId } = req.body; 
+  if (!total) return res.status(400).json({ error: 'Falta el total' });
+  if (!clienteId) return res.status(400).json({ error: 'Falta el ID del cliente' });
   const subtotal = Number(total);
   const iva = +(subtotal * 0.16).toFixed(2);
   const metodoPago = 'Paypal';
-  const clienteId = 1;
-
+  const idUsuario = clienteId; 
   const sql = `INSERT INTO venta (Subtotal, Iva, Hora, Fecha, Metodo_P, Cliente) VALUES (?, ?, CURTIME(), CURDATE(), ?, ?)`;
-
-    db.query(sql, [subtotal, iva, metodoPago, clienteId], (err, result) => {
+  db.query(sql, [subtotal, iva, metodoPago, idUsuario], (err, result) => {
     if (err) {
         console.error(err);
         return res.status(500).json({ error: 'Error al crear la venta' });
     }
+    const idVenta = result.insertId;
+    if (productos && Array.isArray(productos)) {
+        productos.forEach(prod => {
+            const sqlUpdateStock = 'UPDATE gomita SET Stocks = Stocks - ? WHERE id = ?';
+            db.query(sqlUpdateStock, [prod.cantidad, prod.id], (errUpdate) => {
+                if (errUpdate) console.error(`Error stock producto ${prod.id}`, errUpdate);
+            });
+        });
+    }
     res.json({ message: 'Venta creada correctamente', idVenta: result.insertId });
-    });
+  });
 };
 
 export const iniciarSesion = (req, res) => {

@@ -1,42 +1,59 @@
 <br>
 <h1 class="text-xl font-bold mb-4">Carrito de compras</h1>
 <br>
-    @if (carrito().length === 0) {
-      <h3>Tu carrito está vacío.</h3>
-    } @else {
-      <ul class="space-y-2">
-        @for (producto of carrito(); track producto.id) {
-          <li class="container p-3 border rounded flex justify-between items-center">
-            <span><h5>{{ producto.nombre }} - {{ producto.precio | currency }}</h5></span>
-            
-            <button
-              class="bg-red-500 text-white px-2 py-1 rounded"
-              (click)="quitar(producto.id)">
-              <h6>Quitar</h6>
-            </button>
-          </li>
-          <br>
-        }
-      </ul>
-
-      <div class="mt-4 font-semibold">
-        <h3>Total: {{ total() | currency }}</h3>
-      </div>
-
-      <button
-        class="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
-        (click)="vaciar()">
-        <h4>Vaciar carrito</h4>
+@if (carrito().length === 0) {
+  <h3>Tu carrito está vacío.</h3>
+} @else {
+  <ul class="space-y-2">
+    @for (producto of carrito(); track producto.id) {
+      <li class="container p-3 border rounded flex justify-between items-center flex-wrap gap-2">
         
-      </button>
-      <br>
-      <button
-        class="mt-2 bg-purple-500 text-white px-4 py-2 rounded"
-        (click)="exportarXML()">
-        <h4>Exportar Recibo XML</h4>
-    </button>
-    <br><br><br>
-    <div class="d-flex justify-content-center mt-3">
-      <div id="paypal-button-container"></div>
-    </div>
+        <div class="flex items-center gap-2">
+           <span><h5>{{ producto.nombre }}</h5></span>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <button class="bg-gray-300 px-2 py-1 rounded font-bold" (click)="disminuir(producto.id)">-</button>
+            
+            <input 
+              type="number" 
+              class="border text-center w-16 p-1" 
+              [value]="producto.cantidad || 1"
+              (change)="cambiarCantidad($event, producto.id)"
+              min="1">
+            
+            <button class="bg-gray-300 px-2 py-1 rounded font-bold" (click)="aumentar(producto.id)">+</button>
+        </div>
+
+        <div class="text-right">
+            <p class="text-sm text-gray-500">Unitario: {{ producto.precio | currency }}</p>
+            <p class="font-bold">Subtotal: {{ (producto.precio * (producto.cantidad || 1)) | currency }}</p>
+        </div>
+        
+        <button
+          class="bg-red-500 text-white px-2 py-1 rounded"
+          (click)="quitar(producto.id)">
+          <h6>Quitar</h6>
+        </button>
+      </li>
     }
+  </ul>
+
+  <div class="mt-4 font-semibold text-xl text-right">
+    <h3>Total a Pagar: {{ total() | currency }}</h3>
+  </div>
+
+  <div class="flex gap-2 mt-4">
+      <button class="bg-blue-500 text-white px-4 py-2 rounded" (click)="vaciar()">
+        <h4>Vaciar carrito</h4>
+      </button>
+      <button class="bg-purple-500 text-white px-4 py-2 rounded" (click)="exportarXML()">
+        <h4>Exportar Recibo XML</h4>
+      </button>
+  </div>
+
+  <br><br>
+  <div class="d-flex justify-content-center mt-3">
+    <div id="paypal-button-container"></div>
+  </div>
+}

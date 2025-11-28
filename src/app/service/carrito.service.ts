@@ -1,31 +1,90 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { Producto } from '../modelo/producto';
-
+import { iniciarSesionService } from './iniciar-sesion.service';
 @Injectable({ providedIn: 'root' })
 export class CarritoService {
+  // Inicializamos la señal
   private productosSignal = signal<Producto[]>([]);
   productos = this.productosSignal.asReadonly();
-
+  private sesionService = inject(iniciarSesionService);
   private apiUrl = 'http://localhost:4000/api/catalogo';
-
   constructor() {}
+  agregar(producto: Producto) {
+    this.productosSignal.update((lista) => {
+      const existe = lista.find((p) => p.id === producto.id);
+      if (existe) {
+        return lista.map((p) =>
+          p.id === producto.id
+            ? { ...p, cantidad: (p.cantidad || 1) + 1 }
+            : p
+        );
+      } else {
+        return [...lista, { ...producto, cantidad: 1 }];
+      }
+    });
+  }
 
-  // usar fetch y devolver una Promise con el resultado JSON
+  aumentar(id: number) {
+    this.productosSignal.update((lista) =>
+      lista.map((p) => {
+        if (p.id === id) {
+          return { ...p, cantidad: (p.cantidad || 1) + 1 };
+        }
+        return p;
+      })
+    );
+  }
+
+  disminuir(id: number) {
+    this.productosSignal.update((lista) =>
+      lista.map((p) => {
+        if (p.id === id && (p.cantidad || 1) > 1) {
+          return { ...p, cantidad: (p.cantidad || 1) - 1 };
+        }
+        return p;
+      })
+    );
+  }
+
+  actualizarCantidad(id: number, cantidad: number) {
+    if (cantidad < 1) cantidad = 1;
+    this.productosSignal.update((lista) =>
+      lista.map((p) => (p.id === id ? { ...p, cantidad: cantidad } : p))
+    );
+  }
+
+  quitar(id: number) {
+    this.productosSignal.update((lista) => lista.filter((p) => p.id !== id));
+  }
+
+  vaciar() {
+    this.productosSignal.set([]);
+  }
+
+  total() {
+
+    return this.productosSignal().reduce(
+      (acc, p) => acc + p.precio * (p.cantidad || 1),
+      0
+    );
+  }
+
   async crearVenta(): Promise<any> {
     const totalVenta = this.total();
-    console.log('Total calculado:', totalVenta);
+    const productosVenta = this.productosSignal();
+    const usuario = this.sesionService.currentUser();
+    console.log('Datos del usuario activo:', usuario);
 
-    // Validación básica en el frontend
-    if (totalVenta === undefined || totalVenta === null) {
-      alert('Error: no se pudo calcular el total.');
-      throw new Error('Total indefinido');
-    }
-    if (totalVenta <= 0) {
-      alert('El carrito está vacío o el total es 0. Agrega productos antes de comprar.');
-      throw new Error('Total inválido (<= 0)');
+    if (!usuario) {
+      alert('Debes iniciar sesión para comprar');
+      throw new Error('Usuario no autenticado');
     }
 
-    const ventaData = { total: totalVenta };
+    const ventaData = { 
+        total: totalVenta,
+        clienteId: usuario.Id_Clie, 
+        productos: productosVenta.map(p => ({ id: p.id, cantidad: p.cantidad || 1 }))
+    };
 
     try {
       const response = await fetch(`${this.apiUrl}/ventas`, {
@@ -48,51 +107,27 @@ export class CarritoService {
     }
   }
 
-  agregar(producto: Producto) {
-    this.productosSignal.update(lista => [...lista, producto]);
-  }
-
-  quitar(id: number) {
-    this.productosSignal.update(lista => lista.filter(p => p.id !== id));
-  }
-
-  vaciar() { this.productosSignal.set([]); }
-
-  total() {
-    return this.productosSignal().reduce((acc, p) => acc + p.precio, 0);
-  }
-
   exportarXML() {
-    const productos = this.productosSignal();
-
-    // Generar estructura XML manualmente
-    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<recibo>\n`;
-
-    for (const p of productos) {
-      xml += `  <producto>\n`;
-      xml += `    <id>${p.id}</id>\n`;
-      xml += `    <nombre>${p.nombre}</nombre>\n`;
-      xml += `    <precio>${p.precio}</precio>\n`;
-      if (p.descripcion) {
-        xml += `    <descripcion>${p.descripcion}</descripcion>\n`;
+      // (Código existente...)
+      // Nota: Si quieres que el XML refleje la cantidad, deberías agregar <cantidad>${p.cantidad}</cantidad> en tu bucle.
+      const productos = this.productosSignal();
+      let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<recibo>\n`;
+      for (const p of productos) {
+        xml += `  <producto>\n`;
+        xml += `    <id>${p.id}</id>\n`;
+        xml += `    <nombre>${p.nombre}</nombre>\n`;
+        xml += `    <precio>${p.precio}</precio>\n`;
+        xml += `    <cantidad>${p.cantidad || 1}</cantidad>\n`; // Agregado
+        xml += `  </producto>\n`;
       }
-      xml += `  </producto>\n`;
-    }
-
-    xml += `  <total>${this.total()}</total>\n`;
-    xml += `</recibo>`;
-
-    // Crear un Blob con el contenido XML
-    const blob = new Blob([xml], { type: 'application/xml' });
-    const url = URL.createObjectURL(blob);
-
-    // Crear un enlace para forzar la descarga
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'recibo.xml';
-    a.click();
-
-    // Liberar memoria
-    URL.revokeObjectURL(url);
+      xml += `  <total>${this.total()}</total>\n`;
+      xml += `</recibo>`;
+      const blob = new Blob([xml], { type: 'application/xml' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'recibo.xml';
+      a.click();
+      URL.revokeObjectURL(url);
   }
 }
