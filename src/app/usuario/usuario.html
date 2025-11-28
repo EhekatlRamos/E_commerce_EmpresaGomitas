@@ -1,0 +1,41 @@
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">SALAMECK</a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="#">Home</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a [routerLink]="['/carrito']" class="nav-link"><img src="assets/carrito.png" class="icono"></a></li>
+          <li class="nav-item"><a [routerLink]="['/inventario']" class="nav-link"><img src="assets/inventario.png" class="icono"></a></li>
+          <li class="nav-item"><a [routerLink]="['/inicio-sesion']" class="nav-link"><img src="assets/usuario.png" class="icono"></a></li>
+          <li class="nav-item"><a [routerLink]="['']" class="nav-link"><img src="assets/salir.png" class="icono"></a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <br><br>
+  <h1 class="font-bold mb-4">Usuario</h1>
+  <div class="p-4 border rounded shadow container">
+    <form [formGroup]="userForm" (ngSubmit)="submit()">
+        <label for="username"><h4>Nombre de usuario</h4></label><br>
+        <input id="username" type="text" formControlName="username" placeholder="Escribe tu nombre de usuario"><br><br>
+        <label for="contrasena"><h4>Contrasena</h4></label><br>
+        <input type="text" formControlName="password" placeholder="Escribe la contrasena"><br><br>
+        <h4>Correo electronico: </h4>
+        <h4>{{iniciarSesionService.currentUser()?.CorreoElectronico}}</h4>
+        <input type="submit" id="continuar" value="Modificar datos"><br><br>
+    </form>
+    <a [routerLink]="['/aviso-privacidad']" class="nav-link"><h5>Ver aviso de privacidad</h5></a>
+    <a [routerLink]="['/terminos-condiciones']" class="nav-link"><h5>Ver terminos y condiciones</h5></a>
+  </div>
+
+  <br><br>
+  <img src="assets/Salameck.png" style="width:20%; height:auto; display:block;">

@@ -7,10 +7,8 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// --- 1. CONFIGURACIÓN DE MULTER (Subida de imágenes) ---
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        // Asegúrate de crear manualmente la carpeta 'uploads' en src/api/
         const rutaDestino = path.join(__dirname, '../uploads'); 
         cb(null, rutaDestino);
     },
@@ -22,9 +20,6 @@ const storage = multer.diskStorage({
 
 export const upload = multer({ storage: storage });
 
-// --- 2. FUNCIONES DEL CRUD ---
-
-// LEER (GET)
 export const obtenerProducto = (req, res) => {
     const sql = 'SELECT * FROM gomita WHERE Vigencia = 1'; 
     db.query(sql, (err, results) => {
@@ -39,25 +34,18 @@ export const obtenerProducto = (req, res) => {
             precio: p.precio,
             descripcion: p.descripcion,
             imagen: p.imagen,
-            // Mapeamos la columna de la BD 'Stocks' a la propiedad del frontend 'stock'
             stock: p.Stocks, 
-            imagenUrl: null // Dejamos que el frontend decida la ruta
+            imagenUrl: null 
         }));
         res.json(productosMapeados);
     });
 };
 
-// CREAR (POST)
 export const crearProducto = (req, res) => {
     const { nombre, precio, descripcion, stock } = req.body;
     
-    // LÓGICA DE IMAGEN POR DEFECTO:
-    // Si req.file existe, usamos su nombre (se guardará en uploads/).
-    // Si no existe, guardamos 'image'. Tu HTML detectará que no tiene extensión 
-    // y buscará automáticamente 'assets/image.png'.
     const imagen = req.file ? req.file.filename : 'image';
 
-    // Validación de datos básicos
     if (!nombre || !precio) {
         return res.status(400).json({ error: 'Nombre y precio son obligatorios' });
     }
@@ -73,7 +61,6 @@ export const crearProducto = (req, res) => {
     });
 };
 
-// EDITAR (PUT)
 export const editarProducto = (req, res) => {
     const { id } = req.params;
     const { nombre, precio, descripcion, stock } = req.body;
@@ -98,7 +85,6 @@ export const editarProducto = (req, res) => {
     }
 };
 
-// ELIMINAR LÓGICO (PUT)
 export const darBajaProducto = (req, res) => {
     const { id } = req.params;
     const sql = 'UPDATE gomita SET Vigencia = 0 WHERE id = ?';
@@ -138,7 +124,6 @@ export const crearVentas = (req, res) => {
     res.json({ message: 'Venta creada correctamente', idVenta: result.insertId });
   });
 };
-
 export const iniciarSesion = (req, res) => {
     const {username, password} = req.body;
     const sql = `SELECT * FROM usuario WHERE Nombre = ? AND Contrasena = ? `;
@@ -147,7 +132,6 @@ export const iniciarSesion = (req, res) => {
         res.json(result);
     });
 };
-
 export const registrar = (req, res) => {
     const {username, password, email, rol} = req.body;
     if (!username || !password) return res.status(400).json({ error: 'Faltan datos' });
@@ -164,7 +148,6 @@ export const registrar = (req, res) => {
         });
     }); 
 }
-
 export const recuperarContrasena = async (req,res)=> {
     const {username, email} = req.body;
     if (!username || !email) return res.status(400).json({ error: 'Faltan datos' });
@@ -207,3 +190,16 @@ export const recuperarContrasena = async (req,res)=> {
         return res.status(500).json({ ok: false, error: error.message });
     }
 }
+export const editarUser = (req, res) => {
+    const { id } = req.params;
+    const { nombre, contrasena} = req.body;
+    
+    const sql = 'UPDATE usuario SET Nombre = ?, Contrasena = ? WHERE Id_Clie = ?';
+        
+    db.query(sql, [nombre, contrasena, id], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: 'Usuario actualizado' });
+    
+    });
+    
+};

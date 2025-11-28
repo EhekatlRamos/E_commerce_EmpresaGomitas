@@ -1,0 +1,6 @@
+p, li{
+    color: white;
+}
+ol, p{
+    text-align: justify;
+}
