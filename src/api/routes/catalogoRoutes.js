@@ -8,18 +8,16 @@ import {
     iniciarSesion, 
     registrar, 
     recuperarContrasena, 
-    upload // Importamos el middleware de carga
+    upload 
 } from '../controllers/catalogoController.js';
 
 const router = express.Router();
 
-// --- Rutas de Productos ---
 router.get('/productos', obtenerProducto);
-router.post('/productos', upload.single('imagen'), crearProducto); // Crear
-router.put('/productos/:id', upload.single('imagen'), editarProducto); // Editar
-router.put('/productos/baja/:id', darBajaProducto); // Eliminar
+router.post('/productos', upload.single('imagen'), crearProducto); 
+router.put('/productos/:id', upload.single('imagen'), editarProducto); 
+router.put('/productos/baja/:id', darBajaProducto);
 
-// --- Otras Rutas ---
 router.post('/ventas', crearVentas);
 router.post('/iniciar-sesion', iniciarSesion);
 router.post('/registro', registrar);

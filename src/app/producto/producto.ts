@@ -28,15 +28,13 @@ export class CatalogoComponent implements OnInit {
     this.carritoService.agregar(producto);
   }
 
-  // Usamos async/await para esperar los datos limpiamente
-  async ngOnInit() {
+   async ngOnInit() {
     try {
       const data = await this.productoService.getProducts();
       this.productos = data;
       console.log('Productos cargados exitosamente:', this.productos);
     } catch (err) {
       console.error('Error al cargar productos:', err); 
-      // Convertimos el error a string para que se vea en el alert
       alert('Error de conexión con el servidor: ' + err);
     }
   }

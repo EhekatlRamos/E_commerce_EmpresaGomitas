@@ -7,10 +7,8 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// --- 1. CONFIGURACIÓN DE MULTER (Subida de imágenes) ---
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        // Asegúrate de crear manualmente la carpeta 'uploads' en src/api/
         const rutaDestino = path.join(__dirname, '../uploads'); 
         cb(null, rutaDestino);
     },
@@ -22,9 +20,7 @@ const storage = multer.diskStorage({
 
 export const upload = multer({ storage: storage });
 
-// --- 2. FUNCIONES DEL CRUD ---
 
-// LEER (GET)
 export const obtenerProducto = (req, res) => {
     const sql = 'SELECT * FROM gomita WHERE Vigencia = 1'; 
     db.query(sql, (err, results) => {
@@ -39,9 +35,8 @@ export const obtenerProducto = (req, res) => {
             precio: p.precio,
             descripcion: p.descripcion,
             imagen: p.imagen,
-            // Mapeamos la columna de la BD 'Stocks' a la propiedad del frontend 'stock'
             stock: p.Stocks, 
-            imagenUrl: null // Dejamos que el frontend decida la ruta
+            imagenUrl: null
         }));
         res.json(productosMapeados);
     });
@@ -51,13 +46,8 @@ export const obtenerProducto = (req, res) => {
 export const crearProducto = (req, res) => {
     const { nombre, precio, descripcion, stock } = req.body;
     
-    // LÓGICA DE IMAGEN POR DEFECTO:
-    // Si req.file existe, usamos su nombre (se guardará en uploads/).
-    // Si no existe, guardamos 'image'. Tu HTML detectará que no tiene extensión 
-    // y buscará automáticamente 'assets/image.png'.
     const imagen = req.file ? req.file.filename : 'image';
 
-    // Validación de datos básicos
     if (!nombre || !precio) {
         return res.status(400).json({ error: 'Nombre y precio son obligatorios' });
     }
@@ -73,13 +63,11 @@ export const crearProducto = (req, res) => {
     });
 };
 
-// EDITAR (PUT)
 export const editarProducto = (req, res) => {
     const { id } = req.params;
     const { nombre, precio, descripcion, stock } = req.body;
     
     if (req.file) {
-        // Si hay imagen nueva
         const nuevaImagen = req.file.filename;
         const sql = 'UPDATE gomita SET nombre = ?, precio = ?, descripcion = ?, Stocks = ?, imagen = ? WHERE id = ?';
         
@@ -88,7 +76,6 @@ export const editarProducto = (req, res) => {
             res.json({ message: 'Producto actualizado con imagen' });
         });
     } else {
-        // Si no hay imagen nueva (solo texto)
         const sql = 'UPDATE gomita SET nombre = ?, precio = ?, descripcion = ?, Stocks = ? WHERE id = ?';
         
         db.query(sql, [nombre, precio, descripcion, stock, id], (err, result) => {
@@ -97,8 +84,6 @@ export const editarProducto = (req, res) => {
         });
     }
 };
-
-// ELIMINAR LÓGICO (PUT)
 export const darBajaProducto = (req, res) => {
     const { id } = req.params;
     const sql = 'UPDATE gomita SET Vigencia = 0 WHERE id = ?';
