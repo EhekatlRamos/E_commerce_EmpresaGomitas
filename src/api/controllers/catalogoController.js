@@ -182,31 +182,6 @@ export const recuperarContrasena = async (req,res)=> {
         return res.status(500).json({ ok: false, error: error.message });
     }
 }
-export const getUser = (req, res) =>{
-    const {id} = req.body; 
-    const sql = 'SELECT Nombre, Contrasena, CorreoElectronico FROM usuario WHERE Id_Clie = ?';
-    try{
-        db.query(sql, [id], (err, results) => {
-        if (err) {
-            console.error('Error al obtener usuario', err);
-            return res.status(500).json({ error: 'Error al obtener usuario' })
-        }
-        if(!results || results.length === 0){
-            return res.status(500).json({ error: 'Usuario no encontrado' })
-        }
-        const usuario = {
-            id: results[0].Id_Clie,
-            nombre: results[0].Nombre,
-            contrasena: results[0].Contrasena,
-
-        };
-        return res.json(usuario);
-    });
-
-    }catch(error){
-        console.error("Error al traer datos");
-    }
-}
 export const editarUser = (req, res) => {
     const { id } = req.params;
     const { nombre, contrasena} = req.body;

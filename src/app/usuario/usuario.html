@@ -28,9 +28,9 @@
         <label for="username"><h4>Nombre de usuario</h4></label><br>
         <input id="username" type="text" formControlName="username" placeholder="Escribe tu nombre de usuario"><br><br>
         <label for="contrasena"><h4>Contrasena</h4></label><br>
-        <input type="text" formControlName="password" placeholder="Escribe la contrasena" value="{{user?.Contrasena}}"><br><br>
+        <input type="text" formControlName="password" placeholder="Escribe la contrasena"><br><br>
         <h4>Correo electronico: </h4>
-        <h4>{{user?.CorreoElectronico}}</h4>
+        <h4>{{iniciarSesionService.currentUser()?.CorreoElectronico}}</h4>
         <input type="submit" id="continuar" value="Modificar datos"><br><br>
     </form>
     <a [routerLink]="['/aviso-privacidad']" class="nav-link"><h5>Ver aviso de privacidad</h5></a>

@@ -48,5 +48,27 @@ export class iniciarSesionService {
         this.currentUser.set(null);
         localStorage.removeItem('usuario');
     }
+    async actualizarUsuario(id: number, nombre: string, contrasena: string): Promise<boolean>{
+        try {
+            const response = await fetch(`${this.apiUrl}/usuario/${id}`, {
+                method: 'PUT', 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre, contrasena }),
+            });
+            if (!response.ok) return false;
 
+            // Actualizamos la señal localmente para que se vea el cambio inmediato
+            const usuarioActual = this.currentUser();
+            if (usuarioActual) {
+                const usuarioActualizado = { ...usuarioActual, Nombre: nombre, Contrasena: contrasena };
+                this.currentUser.set(usuarioActualizado);
+                localStorage.setItem('usuario', JSON.stringify(usuarioActualizado));
+            }
+
+            return true;
+        }catch(err){
+            console.error("Error al actualizar usuario:", err);
+            return false;
+        }
+    }
 }

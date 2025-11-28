@@ -17,7 +17,6 @@ export class UsuarioComponent implements OnInit{
   public iniciarSesionService = inject(iniciarSesionService); 
   userForm: FormGroup; 
   submitted = false; 
-  user: any; 
   
 
   constructor(private http: HttpClient, private fb: FormBuilder){
@@ -29,16 +28,34 @@ export class UsuarioComponent implements OnInit{
   ngOnInit(): void {
     this.getUser();
   }
-  submit(){
+  async submit(){
     this.submitted = true; 
 
-    this.submitted = true; 
     if(this.userForm.invalid) return; 
+    const usuarioActual = this.iniciarSesionService.currentUser();
+
+    if(usuarioActual && usuarioActual.Id_Clie){
+      const {username, password} = this.userForm.value;
+      const exito = await this.iniciarSesionService.actualizarUsuario(
+            usuarioActual.Id_Clie, 
+            username, 
+            password
+        );
+
+        if (exito) {
+            alert('Usuario actualizado correctamente');
+        } else {
+            alert('Error al actualizar el usuario');
+        }
+    }
   }
   getUser(){
-    this.user = this.iniciarSesionService.currentUser;
-    this.userForm.patchValue({
-      username: this.user.Nombre ?? ''
-    });
+    const usuarioActual = this.iniciarSesionService.currentUser();
+    if(usuarioActual){
+      this.userForm.patchValue({
+        username: usuarioActual.Nombre,
+        password: usuarioActual.Contrasena
+      })
+    }
   }
 }
